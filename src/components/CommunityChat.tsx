@@ -66,6 +66,9 @@ const CommunityChat = () => {
         if (response.ok) {
           setNewMessage('');
           fetchMessages();
+        } else if (response.status === 403) {
+          const data = await response.json();
+          alert('⚠️ ' + (data.error || 'Сообщение заблокировано модератором'));
         }
       } catch (error) {
         console.error('Ошибка отправки сообщения:', error);

@@ -2,11 +2,38 @@ import json
 import os
 import psycopg2
 import random
-from typing import Dict, Any
+import re
+from typing import Dict, Any, List
+
+def contains_profanity(text: str) -> bool:
+    '''
+    Проверяет текст на наличие нецензурных слов
+    '''
+    profanity_patterns: List[str] = [
+        r'\b[xх][uу][йиеёyeя]',
+        r'\b[pп][iі1и][zз3]\w*[eе]?[cс]',
+        r'\b[бb6][лl]\w*[дd]',
+        r'\b[eе][бb6]\w*[нnh]',
+        r'\b[мm][уyu]\w*[дd]\w*[aа]',
+        r'\b[sс][уyu]\w*[kк]',
+        r'\b[гg]\w*[вvоo]\w*[нnh]',
+        r'\b[жzg]\w*[pп]',
+        r'\b[дd]\w*[eе]\w*[рpr]\w*[мm]',
+        r'\b[sс]\w*[рpr]\w*[aа]\w*[тt]',
+    ]
+    
+    text_lower = text.lower()
+    text_normalized = text_lower.replace('ё', 'е')
+    
+    for pattern in profanity_patterns:
+        if re.search(pattern, text_normalized, re.IGNORECASE):
+            return True
+    
+    return False
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: API для чата участников марафона - получение и отправка сообщений
+    Business: API для чата участников марафона - получение и отправка сообщений с модерацией
     Args: event - dict с httpMethod, body, queryStringParameters
           context - object с атрибутами request_id, function_name
     Returns: HTTP response dict с сообщениями чата
@@ -96,6 +123,21 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'Access-Control-Allow-Origin': '*'
                     },
                     'body': json.dumps({'error': 'Username or text too long'})
+                }
+            
+            if contains_profanity(text):
+                cursor.close()
+                conn.close()
+                return {
+                    'statusCode': 403,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    'body': json.dumps({
+                        'error': 'Сообщение содержит недопустимые выражения',
+                        'blocked': True
+                    })
                 }
             
             colors = ['#0EA5E9', '#F97316', '#8B5CF6', '#10B981', '#EF4444', '#F59E0B']
