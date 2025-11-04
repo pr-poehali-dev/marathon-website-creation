@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
-import CommunityChat from '@/components/CommunityChat';
 
 const Index = () => {
   const targetDate = new Date('2025-12-01T00:00:00').getTime();
@@ -40,7 +39,6 @@ const Index = () => {
             <a href="#program" className="hover:text-primary transition-colors">Программа</a>
             <a href="#trainers" className="hover:text-primary transition-colors">Тренеры</a>
             <a href="#reviews" className="hover:text-primary transition-colors">Отзывы</a>
-            <a href="#chat" className="hover:text-primary transition-colors">Чат</a>
             <a href="#register" className="hover:text-primary transition-colors">Регистрация</a>
             <a href="#contacts" className="hover:text-primary transition-colors">Контакты</a>
           </div>
@@ -190,16 +188,6 @@ const Index = () => {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section id="chat" className="py-20 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Чат Участников</h2>
-          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Общайтесь с единомышленниками, делитесь опытом и поддерживайте друг друга на пути к здоровью
-          </p>
-          <CommunityChat />
         </div>
       </section>
 
